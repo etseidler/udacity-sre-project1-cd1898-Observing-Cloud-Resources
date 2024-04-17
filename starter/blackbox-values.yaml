@@ -64,8 +64,9 @@ strategy:
   type: RollingUpdate
 
 image:
-  repository: prom/blackbox-exporter
-  tag: v0.19.0
+  registry: quay.io
+  repository: prometheus/blackbox-exporter
+  tag: ""
   pullPolicy: IfNotPresent
 
   ## Optionally specify an array of imagePullSecrets.
@@ -99,21 +100,21 @@ affinity: {}
 # in favor of the config value.
 configExistingSecretName: ""
 # Store the configuration as a `Secret` instead of a `ConfigMap`, useful in case it contains sensitive data
-# secretConfig: false
-# config:
-#   modules:
-#     http_2xx:
-#       prober: http
-#       timeout: 5s
-#       http:
-#         valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
-#         follow_redirects: true
-#         preferred_ip_protocol: "ip4"
-#         valid_status_codes:
-#         - 200
-#         # - 401
-#         # - 403
-#         bearer_token: 
+secretConfig: false
+config:
+  modules:
+    http_2xx:
+      prober: http
+      timeout: 5s
+      http:
+        valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+        follow_redirects: true
+        preferred_ip_protocol: "ip4"
+        valid_status_codes:
+          - 200
+        # - 401
+        # - 403
+        bearer_token: XXXXXXXXXXX
 # Set custom config path, other than default /config/blackbox.yaml. If let empty, path will be "/config/blackbox.yaml"
 # configPath: "/foo/bar"
 
@@ -220,14 +221,15 @@ serviceMonitor:
   tlsConfig: {}
   bearerTokenFile:
 
+  # where did this come from???
   targets:
-#    - name: example                    # Human readable URL that will appear in Prometheus / AlertManager
-#      url: http://example.com/healthz  # The URL that blackbox will scrape
-#      labels: {}                       # Map of labels for ServiceMonitor. Overrides value set in `defaults`
-#      interval: 60s                    # Scraping interval. Overrides value set in `defaults`
-#      scrapeTimeout: 60s               # Scrape timeout. Overrides value set in `defaults`
-#      module: http_2xx                 # Module used for scraping. Overrides value set in `defaults`
-#      additionalMetricsRelabels: {}    # Map of metric labels and values to add
+    - name: ec2box # Human readable URL that will appear in Prometheus / AlertManager
+      url: http://50.16.168.194/events # The URL that blackbox will scrape
+      labels: {} # Map of labels for ServiceMonitor. Overrides value set in `defaults`
+      interval: 60s # Scraping interval. Overrides value set in `defaults`
+      scrapeTimeout: 60s # Scrape timeout. Overrides value set in `defaults`
+      module: http_2xx # Module used for scraping. Overrides value set in `defaults`
+      additionalMetricsRelabels: {} # Map of metric labels and values to add
 
 ## Custom PrometheusRules to be defined
 ## ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
